@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "start-7000": "next dev -p 7000"
+    "start-7000": "next start -p 7000"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.62.3",
