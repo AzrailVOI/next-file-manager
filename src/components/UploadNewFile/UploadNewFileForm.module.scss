@@ -1,0 +1,25 @@
+.upload {
+  & > svg {
+    transition: all 0.3s ease-in-out;
+    will-change: transform;
+  }
+
+  &:hover {
+    & > svg {
+      transform: translateX(15%);
+    }
+  }
+}
+
+.choose {
+  & > svg {
+    transition: all 0.3s ease-in-out;
+    will-change: transform;
+  }
+
+  &:hover {
+    & > svg {
+      transform: translateY(-8%);
+    }
+  }
+}

@@ -1,0 +1,18 @@
+.button {
+  > svg {
+    transition: all 0.3s ease-in-out;
+    will-change: transform;
+  }
+
+  &:hover {
+    & > svg {
+      transform: translateY(5%);
+    }
+  }
+}
+
+.round {
+  > * {
+    @apply rounded-lg overflow-hidden;
+  }
+}

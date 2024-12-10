@@ -1,0 +1,91 @@
+@use "../constants/colors" as colors;
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  color: colors.$grey;
+  background: colors.$bg;
+  font-family: --font-montserrat, sans-serif;
+  @apply text-[1rem];
+}
+
+main {
+  /* Стили для скроллбара */
+  &::-webkit-scrollbar {
+    width: 5px; /* Ширина скроллбара */
+  }
+
+  /* Стили для полосы прокрутки */
+  &::-webkit-scrollbar-thumb {
+    background-color: colors.$light-grey; /* Цвет скроллбара */
+    border-radius: 5px; /* Радиус закругления */
+  }
+
+  /* Стили для полосы прокрутки при наведении */
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: colors.$light-grey; /* Цвет скроллбара при наведении */
+  }
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: colors.$light-grey transparent; /* Цвет полосы прокрутки и трека (в нашем случае трек будет прозрачным) */
+
+  /* Стили для скроллбара */
+  &::-webkit-scrollbar {
+    width: 5px; /* Ширина скроллбара */
+  }
+
+  /* Стили для полосы прокрутки */
+  &::-webkit-scrollbar-thumb {
+    background-color: colors.$light-grey; /* Цвет скроллбара */
+    border-radius: 5px; /* Радиус закругления */
+  }
+
+  /* Стили для полосы прокрутки при наведении */
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: colors.$light-grey; /* Цвет скроллбара при наведении */
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .d-none {
+    display: none;
+  }
+
+  .bootstrap {
+    width: 1320px;
+    margin: 0 auto;
+
+    @media (max-width: 1320px) {
+      width: 95%;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 768px) {
+      width: 95%;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 576px) {
+      width: 95%;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 320px) {
+      width: 95%;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 280px) {
+      width: 95%;
+      margin: 0 auto;
+    }
+  }
+}
