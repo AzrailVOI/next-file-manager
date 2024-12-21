@@ -28,8 +28,6 @@ export async function GET(req: NextRequest) {
 	const metadataDir = path.join(METADATA_FOLDER, pathname)
 	await fs.mkdir(metadataDir, { recursive: true })
 
-	console.log('metadataDir', metadataDir)
-
 	try {
 		const items = await readdir(metadataDir, { withFileTypes: true })
 

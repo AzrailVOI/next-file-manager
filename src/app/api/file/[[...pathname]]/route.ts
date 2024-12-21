@@ -22,10 +22,12 @@ export const config = {
 
 export async function POST(
 	req: NextRequest,
-	{ params }: { params: Promise<{ pathname: string }> }
+	{ params }: { params: Promise<{ pathname: string[] }> }
 ) {
 	try {
-		const pathname = (await params).pathname || ''
+		const pathnameParam = (await params).pathname
+		const pathname = pathnameParam.join('/')
+		console.log('pathname', pathname)
 		if (!pathname) {
 			return NextResponse.json(
 				{ error: UploadErrorsEnum.PATHNAME_MISSING },
@@ -61,6 +63,8 @@ export async function POST(
 		const metadataDir = path.join(METADATA_FOLDER, pathname)
 		await fs.mkdir(saveDir, { recursive: true })
 		await fs.mkdir(metadataDir, { recursive: true })
+		console.log('saveDir', saveDir)
+		console.log('metadataDir', metadataDir)
 
 		const existedFiles = []
 		for (const file of files) {
