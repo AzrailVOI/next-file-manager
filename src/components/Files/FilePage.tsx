@@ -36,10 +36,13 @@ export default function FilePage({ pathname }: IFilePage) {
 	}
 
 	return (
-		<div className={'px-2 h-full'}>
-			<div className={'flex justify-between'}>
-				<h1 className={'font-bold text-xl'}>
-					{TextDictionary[lang].files.file}: {fileName}
+		<div className={'px-2 h-full grid grid-rows-[auto_1fr] '}>
+			<div className={'flex justify-between flex-col lg:flex-row'}>
+				<h1 className={'font-bold w-full text-xl break-all'}>
+					<span className={'d-none lg:inline-block'}>
+						{TextDictionary[lang].files.file}:
+					</span>{' '}
+					{fileName}
 				</h1>
 				<div className={'flex gap-2'}>
 					<Button
@@ -58,7 +61,7 @@ export default function FilePage({ pathname }: IFilePage) {
 					</Link>
 				</div>
 			</div>
-			<div className={clsx('h-full mt-2', styles.round)}>
+			<div className={clsx('mt-2', styles.round)}>
 				{isLoading && <MiniLoader />}
 				{file && <DisplayFile file={file} />}
 			</div>

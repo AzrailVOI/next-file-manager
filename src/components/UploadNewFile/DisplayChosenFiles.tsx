@@ -25,7 +25,7 @@ export default function DisplayChosenFiles() {
 			exit={{ opacity: 0, width: '20rem', height: 0 }}
 			transition={{ duration: 0.3 }}
 			className={clsx(
-				'fixed z-10 bottom-2 right-2 py-1 px-2 border border-border bg-bg rounded-lg overflow-hidden',
+				'lg:fixed z-10 bottom-2 right-2 py-1 px-2 border border-border bg-bg rounded-lg overflow-hidden',
 				{
 					'border-violet bg-bg_dark': theme === 'dark'
 				}
@@ -53,7 +53,7 @@ export default function DisplayChosenFiles() {
 							transition={{ duration: 0.3 }}
 							className='w-full grid grid-cols-[2fr_1fr_auto] items-center gap-2'
 						>
-							<span className='overflow-x-hidden whitespace-nowrap'>
+							<span className='overflow-x-hidden whitespace-nowrap text-ellipsis'>
 								{file.name}
 							</span>
 							<span>
@@ -66,6 +66,7 @@ export default function DisplayChosenFiles() {
 								<button
 									className={clsx('transition-all hover:rotate-180')}
 									onClick={() => removeFile(file)}
+									type={'button'}
 								>
 									<CircleMinus />
 								</button>

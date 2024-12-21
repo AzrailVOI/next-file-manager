@@ -1,5 +1,6 @@
 'use client'
 
+import { clsx } from 'clsx'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 
@@ -7,10 +8,12 @@ import TextDictionary from '@/constants/dictionary'
 
 import useSettingsStore from '@/store/useSettingsStore'
 
+import styles from './FilePage.module.scss'
+
 export default function DisplayFile({ file }: { file: Blob }) {
 	const [fileURL, setFileURL] = useState<string | null>(null)
 	const [mimeType, setMimeType] = useState<string | null>(null)
-	const lang = useSettingsStore(state => state.lang)
+	const { lang, theme } = useSettingsStore(state => state)
 
 	useEffect(() => {
 		if (file) {
@@ -47,6 +50,9 @@ export default function DisplayFile({ file }: { file: Blob }) {
 					height: '100%',
 					border: '1px solid #ccc'
 				}}
+				className={clsx('will-change-[filter]', {
+					[styles.textDisplayDark]: theme === 'dark'
+				})}
 			/>
 		)
 	}

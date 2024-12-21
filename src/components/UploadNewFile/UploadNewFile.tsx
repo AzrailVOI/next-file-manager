@@ -23,10 +23,16 @@ export default async function UploadNewFile({
 
 	return (
 		<Fragment>
-			<header className={'p-1'}>
+			<header
+				className={
+					'p-1 flex flex-col w-90p m-auto md:w-full justify-center items-center'
+				}
+			>
 				<Link
 					href={'/'}
-					className={'block text-2xl md:text-4xl font-bold text-center mb-3'}
+					className={
+						'inline-block text-xl md:text-4xl font-bold text-center mb-3'
+					}
 				>
 					{TextDictionary[lang || 'en'].title}
 				</Link>
@@ -35,7 +41,7 @@ export default async function UploadNewFile({
 			<Settings />
 			<div
 				className={
-					'grid gap-2 lg:gap-5 2xl:grid-cols-[1.1fr_6fr] grid-cols-[1.2fr_6fr] lg:grid-rows-[auto_1fr] mt-1'
+					'grid gap-2 lg:gap-5 2xl:grid-cols-[1.1fr_6fr] lg:grid-cols-[auto_6fr] grid-rows-[auto_1fr_auto] mt-1'
 				}
 			>
 				<h2
@@ -45,7 +51,11 @@ export default async function UploadNewFile({
 				>
 					{TextDictionary[lang || 'en'].upload.upload}
 				</h2>
-				<div className={'d-none lg:flex gap-2'}>
+				<div
+					className={
+						'flex gap-2 overflow-x-auto overflow-ellipsis whitespace-nowrap'
+					}
+				>
 					<Link
 						href={'/'}
 						className={clsx(
@@ -61,15 +71,23 @@ export default async function UploadNewFile({
 				</div>
 
 				<Providers>
-					<UploadSidebar />
-					<main className={'py-1'}>
+					<div className={'d-none lg:block'}>
+						<UploadSidebar />
+					</div>
+
+					<main className={'py-1 overflow-y-auto'}>
 						{/*<p>{TextDictionary[lang || 'en'].files.newFolder}</p>*/}
 
 						{children}
 					</main>
+					<div className={'block lg:d-none'}>
+						<UploadSidebar />
+					</div>
 				</Providers>
 			</div>
-			<Footer />
+			<div className={'d-none lg:block'}>
+				<Footer />
+			</div>
 		</Fragment>
 	)
 }

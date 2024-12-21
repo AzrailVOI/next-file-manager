@@ -26,7 +26,7 @@ export default function PathnameUpdaterClient() {
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.3 }}
 			className={clsx(
-				'd-none lg:flex items-center justify-center text-lg md:text-2xl font-bold gap-1'
+				'flex items-center justify-center text-lg md:text-2xl font-bold gap-1'
 			)}
 		>
 			<AnimatePresence mode='popLayout'>

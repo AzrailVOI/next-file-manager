@@ -50,7 +50,9 @@ export default function TreeItem({ file, dir }: IFileItemProps) {
 			</span>
 
 			{/* Имя файла или директории */}
-			<span>{file?.name || dir?.name}</span>
+			<span className={'overflow-x-hidden overflow-ellipsis whitespace-nowrap'}>
+				{file?.name || dir?.name}
+			</span>
 
 			{/* Размер файла (если есть) */}
 			{file ? (
@@ -65,7 +67,7 @@ export default function TreeItem({ file, dir }: IFileItemProps) {
 					)}
 				</span>
 			) : (
-				<span></span>
+				<span className='d-none lg:inline-block'></span>
 			)}
 
 			{/* Дата и время последнего изменения */}
@@ -79,7 +81,7 @@ export default function TreeItem({ file, dir }: IFileItemProps) {
 					{uploadedAtDate} {uploadedAtTime}
 				</span>
 			) : (
-				<span></span>
+				<span className='d-none lg:inline-block'></span>
 			)}
 		</Link>
 	)

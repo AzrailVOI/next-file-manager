@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense } from 'react'
+import { Fragment, Suspense } from 'react'
 
 import TreeHeader from '@/components/Files/TreeHeader'
 import TreeItem from '@/components/Files/TreeItem'
@@ -22,7 +22,7 @@ export default function TreePage({ pathname }: IFilePageProps) {
 	const lang = useSettingsStore(state => state.lang)
 
 	return (
-		<div>
+		<Fragment>
 			<OnePxLineClient />
 			<TreeHeader />
 			{isTreeLoading && <MiniLoader className={'w-full'} />}
@@ -50,6 +50,6 @@ export default function TreePage({ pathname }: IFilePageProps) {
 					</span>
 				)}
 			</Suspense>
-		</div>
+		</Fragment>
 	)
 }

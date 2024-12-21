@@ -84,6 +84,9 @@ export default function UploadNewFileForm() {
 				onSubmit={handleSubmit}
 				className={'flex flex-col gap-2'}
 			>
+				<AnimatePresence>
+					{chosenFiles.length > 0 && <DisplayChosenFiles />}
+				</AnimatePresence>
 				<div className={'flex flex-col gap-3.5'}>
 					<label
 						htmlFor={'file'}
@@ -113,9 +116,6 @@ export default function UploadNewFileForm() {
 					</Button>
 				</div>
 			</form>
-			<AnimatePresence>
-				{chosenFiles.length > 0 && <DisplayChosenFiles />}
-			</AnimatePresence>
 		</Fragment>
 	)
 }

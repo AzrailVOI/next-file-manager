@@ -26,7 +26,7 @@ export async function POST(
 ) {
 	try {
 		const pathnameParam = (await params).pathname
-		const pathname = pathnameParam.join('/')
+		const pathname = pathnameParam ? pathnameParam.join('/') : '/'
 		console.log('pathname', pathname)
 		if (!pathname) {
 			return NextResponse.json(
