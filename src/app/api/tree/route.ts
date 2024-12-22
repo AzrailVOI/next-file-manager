@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
 			{ status: 400 }
 		)
 	}
-	if (!/^[a-zA-Zа-яА-ЯёЁ0-9/_\s-]+$/.test(pathname)) {
+	if (!/^[\p{L}0-9/_\s-]+$/u.test(pathname)) {
 		return NextResponse.json(
 			{ error: UploadErrorsEnum.PATHNAME_INVALID },
 			{ status: 400 }
