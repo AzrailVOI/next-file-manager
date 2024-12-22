@@ -149,7 +149,7 @@ export async function GET(
 ) {
 	try {
 		const pathnameArray = (await params).pathname || '' //[ 'lol', 'c59acac2006f65ca7ef6689b1a9795d2.pdf' ]
-		const pathname = pathnameArray.join('/')
+		const pathname = decodeURIComponent(pathnameArray.join('/'))
 		console.log('pathname', pathname)
 		if (!pathname) {
 			return NextResponse.json(

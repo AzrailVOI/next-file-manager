@@ -14,7 +14,8 @@ const TextDictionary: ITextDictionary = {
 			name: 'Name',
 			size: 'Size',
 			modified: 'Last modified',
-			uploadedAt: 'Uploaded at'
+			uploadedAt: 'Uploaded at',
+			successCreated: 'Folder created successfully'
 		},
 		messages: {
 			copied: 'Copied',
@@ -36,7 +37,8 @@ const TextDictionary: ITextDictionary = {
 				[UploadErrorsEnum.ALREADY_EXISTS]: 'Files already exists',
 				[UploadErrorsEnum.METADATA_MISMATCH]: 'Metadata mismatch',
 				[UploadErrorsEnum.INVALID_METADATA]: 'Invalid metadata',
-				[UploadErrorsEnum.UNSUPPORTED_FILE_TYPE]: 'Impossible to display file'
+				[UploadErrorsEnum.UNSUPPORTED_FILE_TYPE]: 'Impossible to display file',
+				[UploadErrorsEnum.INVALID_FOLDER_NAME]: 'Invalid folder name'
 			},
 			maxSize: 'Max files size is 100 MB'
 		},
@@ -57,7 +59,8 @@ const TextDictionary: ITextDictionary = {
 			open: 'Open',
 			rename: 'Rename',
 			delete: 'Delete',
-			copy: 'Copy link'
+			copy: 'Copy link',
+			save: 'Save'
 		},
 		settings: {
 			language: 'Language',
@@ -79,7 +82,8 @@ const TextDictionary: ITextDictionary = {
 			name: 'Назва',
 			size: 'Розмір',
 			modified: 'Остання зміна',
-			uploadedAt: 'Завантажено'
+			uploadedAt: 'Завантажено',
+			successCreated: 'Папка успішно створена'
 		},
 		messages: {
 			copied: 'Скопійовано',
@@ -101,7 +105,8 @@ const TextDictionary: ITextDictionary = {
 				[UploadErrorsEnum.ALREADY_EXISTS]: 'Файли вже існують',
 				[UploadErrorsEnum.METADATA_MISMATCH]: 'Неспівпадіння метаданих',
 				[UploadErrorsEnum.INVALID_METADATA]: 'Неправильні метадані',
-				[UploadErrorsEnum.UNSUPPORTED_FILE_TYPE]: 'Неможливо відобразити файл'
+				[UploadErrorsEnum.UNSUPPORTED_FILE_TYPE]: 'Неможливо відобразити файл',
+				[UploadErrorsEnum.INVALID_FOLDER_NAME]: 'Неправильна назва папки'
 			},
 			maxSize: 'Максимальний розмір файлів 100 МБ'
 		},
@@ -122,7 +127,8 @@ const TextDictionary: ITextDictionary = {
 			open: 'Відкрити',
 			rename: 'Перейменувати',
 			delete: 'Видалити',
-			copy: 'Копіювати посилання'
+			copy: 'Копіювати посилання',
+			save: 'Зберегти'
 		},
 		settings: {
 			language: 'Мова',
@@ -144,7 +150,8 @@ const TextDictionary: ITextDictionary = {
 			name: 'Название',
 			size: 'Размер',
 			modified: 'Последнее изменение',
-			uploadedAt: 'Загружено'
+			uploadedAt: 'Загружено',
+			successCreated: 'Папка успешно создана'
 		},
 		messages: {
 			copied: 'Скопировано',
@@ -166,7 +173,8 @@ const TextDictionary: ITextDictionary = {
 				[UploadErrorsEnum.ALREADY_EXISTS]: 'Файлы уже существуют',
 				[UploadErrorsEnum.METADATA_MISMATCH]: 'Несовпадение метаданных',
 				[UploadErrorsEnum.INVALID_METADATA]: 'Неправильные метаданные',
-				[UploadErrorsEnum.UNSUPPORTED_FILE_TYPE]: 'Невозможно отобразить файл'
+				[UploadErrorsEnum.UNSUPPORTED_FILE_TYPE]: 'Невозможно отобразить файл',
+				[UploadErrorsEnum.INVALID_FOLDER_NAME]: 'Неправильное имя папки'
 			},
 			maxSize: 'Максимальный размер файлов 100 МБ'
 		},
@@ -187,7 +195,8 @@ const TextDictionary: ITextDictionary = {
 			open: 'Открыть',
 			rename: 'Переименовать',
 			delete: 'Удалить',
-			copy: 'Скопировать ссылку'
+			copy: 'Скопировать ссылку',
+			save: 'Сохранить'
 		},
 		settings: {
 			language: 'Язык',
@@ -209,7 +218,8 @@ const TextDictionary: ITextDictionary = {
 			name: 'Meno',
 			size: 'Velkost',
 			modified: 'Posledný zmena',
-			uploadedAt: 'Nahraté'
+			uploadedAt: 'Nahraté',
+			successCreated: 'Zložka bola uspešne vytvorena'
 		},
 		messages: {
 			copied: 'Skopirano',
@@ -231,7 +241,8 @@ const TextDictionary: ITextDictionary = {
 				[UploadErrorsEnum.ALREADY_EXISTS]: 'Súbory už existujú',
 				[UploadErrorsEnum.METADATA_MISMATCH]: 'Nesovpad metadatov',
 				[UploadErrorsEnum.INVALID_METADATA]: 'Neplatne metadaty',
-				[UploadErrorsEnum.UNSUPPORTED_FILE_TYPE]: 'Nemožno zobraziť súbor'
+				[UploadErrorsEnum.UNSUPPORTED_FILE_TYPE]: 'Nemožno zobraziť súbor',
+				[UploadErrorsEnum.INVALID_FOLDER_NAME]: 'Neplatné meno zložky'
 			},
 			maxSize: 'Maximalna velkost súborov je 100 MB'
 		},
@@ -252,7 +263,8 @@ const TextDictionary: ITextDictionary = {
 			open: 'Otvoriť',
 			rename: 'Premenovať',
 			delete: 'Vymazať',
-			copy: 'Kopírujúť odkaz'
+			copy: 'Kopírujúť odkaz',
+			save: 'Uložiť'
 		},
 		settings: {
 			language: 'Jazyk',
@@ -304,6 +316,7 @@ export interface IContextMenu {
 	rename: string
 	delete: string
 	copy: string
+	save: string
 }
 
 export interface ITheme {
@@ -333,6 +346,7 @@ export interface ITree {
 	size: string
 	modified: string
 	uploadedAt: string
+	successCreated: string
 }
 
 export interface ITDItem {

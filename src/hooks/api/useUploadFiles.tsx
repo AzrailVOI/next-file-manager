@@ -2,10 +2,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import { toast } from 'sonner'
 
-import { IUploadError, UploadErrorsEnum } from '@/constants/api.constants'
 import TextDictionary from '@/constants/dictionary'
 
 import useSettingsStore from '@/store/useSettingsStore'
+
+import { displayError } from '@/utils/display-error'
 
 export const useUploadFiles = (pathname: string) => {
 	const lang = useSettingsStore(state => state.lang)
@@ -31,35 +32,8 @@ export const useUploadFiles = (pathname: string) => {
 			queryClient.invalidateQueries({ queryKey: ['tree', pathname] })
 			toast.success(TextDictionary[lang].upload.success)
 		},
-		onError: e => {
-			const error: IUploadError = {
-				error: e.response.data.error,
-				details: e.response.data.details || []
-			}
-			switch (error.error) {
-				case UploadErrorsEnum.SOMETHING_WENT_WRONG ||
-					UploadErrorsEnum.ALREADY_EXISTS ||
-					UploadErrorsEnum.METADATA_MISMATCH:
-					toast.error(
-						() => (
-							<div>
-								<p>{TextDictionary[lang].upload.error[error.error]}</p>
-								{error.details &&
-									error.details.length > 0 &&
-									error.details.map(message => (
-										<p key={error.error + message}>{message}</p>
-									))}
-							</div>
-						),
-						{ duration: 5000 }
-					)
-					break
-				default:
-					toast.error(TextDictionary[lang].upload.error[error.error], {
-						duration: 5000
-					})
-					break
-			}
+		onError: error => {
+			displayError(error, lang)
 		}
 	})
 

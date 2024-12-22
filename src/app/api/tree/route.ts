@@ -4,19 +4,26 @@ import { readFile, readdir, stat } from 'node:fs/promises'
 import path from 'path'
 
 import { UploadErrorsEnum } from '@/constants/api.constants'
-import { METADATA_FOLDER } from '@/constants/files.constants'
+import { METADATA_FOLDER, UPLOAD_FOLDER } from '@/constants/files.constants'
 
 import { IDirMetadata, IFileMetadata, ITreeResponse } from '@/types/file.types'
 
+import { validateFolderName } from '@/utils/validate-folder.util'
+
 export async function GET(req: NextRequest) {
-	const pathname = req.nextUrl.searchParams.get('pathname') || ''
+	const pathname = decodeURIComponent(
+		req.nextUrl.searchParams.get('pathname') || ''
+	)
+
+	console.log('pathname', pathname)
+
 	if (!pathname) {
 		return NextResponse.json(
 			{ error: UploadErrorsEnum.PATHNAME_MISSING },
 			{ status: 400 }
 		)
 	}
-	if (!/^[a-zA-Zа-яА-ЯёЁ0-9/_-]+$/.test(pathname)) {
+	if (!/^[a-zA-Zа-яА-ЯёЁ0-9/_\s-]+$/.test(pathname)) {
 		return NextResponse.json(
 			{ error: UploadErrorsEnum.PATHNAME_INVALID },
 			{ status: 400 }
@@ -60,6 +67,52 @@ export async function GET(req: NextRequest) {
 		}
 
 		return NextResponse.json(response, { status: 200 })
+	} catch (err: any) {
+		console.error(err)
+		return NextResponse.json(
+			{
+				error: UploadErrorsEnum.SOMETHING_WENT_WRONG,
+				details: [err.message]
+			},
+			{ status: 500 }
+		)
+	}
+}
+
+export async function POST(req: NextRequest) {
+	try {
+		const folderInfo = await req.json()
+
+		const name = decodeURIComponent(folderInfo.name)
+		if (!name) {
+			return NextResponse.json(
+				{ error: UploadErrorsEnum.PATHNAME_MISSING },
+				{ status: 400 }
+			)
+		}
+		const pathname = decodeURIComponent(folderInfo.pathname)
+
+		// Валидация имени папки
+		const validation = validateFolderName(name)
+		if (!validation.isValid) {
+			return NextResponse.json(
+				{
+					error: UploadErrorsEnum.INVALID_FOLDER_NAME,
+					details: validation.errors
+				},
+				{ status: 400 }
+			)
+		}
+
+		// Генерация путей для папок
+		const metadataDir = path.join(METADATA_FOLDER, pathname, name)
+		const saveDir = path.join(UPLOAD_FOLDER, pathname, name)
+
+		// Создание папок
+		await fs.mkdir(metadataDir, { recursive: true })
+		await fs.mkdir(saveDir, { recursive: true })
+
+		return NextResponse.json({ error: null }, { status: 200 })
 	} catch (err: any) {
 		console.error(err)
 		return NextResponse.json(

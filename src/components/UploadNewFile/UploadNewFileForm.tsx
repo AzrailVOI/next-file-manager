@@ -2,7 +2,7 @@
 
 import { clsx } from 'clsx'
 import { AnimatePresence } from 'framer-motion'
-import { FileUp, SendHorizontal } from 'lucide-react'
+import { FileUp, FolderPlus, SendHorizontal } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { ChangeEvent, FormEvent, Fragment, useCallback, useEffect } from 'react'
 import { toast } from 'sonner'
@@ -13,6 +13,7 @@ import DisplayChosenFiles from '@/components/UploadNewFile/DisplayChosenFiles'
 
 import TextDictionary from '@/constants/dictionary'
 
+import useCreateFolderStore from '@/store/useCreateFolderStore'
 import useFilesStore from '@/store/useFilesStore'
 import useSettingsStore from '@/store/useSettingsStore'
 
@@ -23,6 +24,9 @@ import styles from './UploadNewFileForm.module.scss'
 export default function UploadNewFileForm() {
 	const { chosenFiles, setChosenFiles } = useFilesStore(state => state)
 	const { theme, lang } = useSettingsStore(state => state)
+	const { setIsFolderCreating, isFolderCreating } = useCreateFolderStore(
+		state => state
+	)
 	const pathname = usePathname()
 	const { uploadFiles, isSuccess, isPending, isError } =
 		useUploadFiles(pathname)
@@ -88,6 +92,17 @@ export default function UploadNewFileForm() {
 					{chosenFiles.length > 0 && <DisplayChosenFiles />}
 				</AnimatePresence>
 				<div className={'flex flex-col gap-3.5'}>
+					<Button
+						type={'button'}
+						className={clsx('p-2 justify-center flex', styles.choose, {
+							'border-violet hover:bg-violet': theme === 'dark',
+							'bg-violet': theme === 'dark' && isFolderCreating,
+							'bg-grey text-bg': theme === 'light' && isFolderCreating
+						})}
+						onClick={() => setIsFolderCreating(!isFolderCreating)}
+					>
+						<FolderPlus />
+					</Button>
 					<label
 						htmlFor={'file'}
 						className={clsx(
