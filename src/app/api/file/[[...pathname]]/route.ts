@@ -11,6 +11,7 @@ import {
 	METADATA_FOLDER,
 	UPLOAD_FOLDER
 } from '@/constants/files.constants'
+import { validationPathnameRegex } from '@/constants/validation.constants'
 
 import { IFileMetadata } from '@/types/file.types'
 
@@ -35,7 +36,7 @@ export async function POST(
 			)
 		}
 		//PATHNAME INVALID CHECK
-		if (!/^[a-zA-Zа-яА-ЯёЁ0-9/_-]+$/.test(pathname)) {
+		if (!validationPathnameRegex.test(pathname)) {
 			return NextResponse.json(
 				{ error: UploadErrorsEnum.PATHNAME_INVALID },
 				{ status: 400 }

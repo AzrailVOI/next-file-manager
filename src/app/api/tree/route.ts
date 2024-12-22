@@ -5,6 +5,7 @@ import path from 'path'
 
 import { UploadErrorsEnum } from '@/constants/api.constants'
 import { METADATA_FOLDER, UPLOAD_FOLDER } from '@/constants/files.constants'
+import { validationPathnameRegex } from '@/constants/validation.constants'
 
 import { IDirMetadata, IFileMetadata, ITreeResponse } from '@/types/file.types'
 
@@ -23,7 +24,7 @@ export async function GET(req: NextRequest) {
 			{ status: 400 }
 		)
 	}
-	if (!/^[\p{L}0-9/_\s-]+$/u.test(pathname)) {
+	if (!validationPathnameRegex.test(pathname)) {
 		return NextResponse.json(
 			{ error: UploadErrorsEnum.PATHNAME_INVALID },
 			{ status: 400 }
