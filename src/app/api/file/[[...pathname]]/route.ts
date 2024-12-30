@@ -11,9 +11,10 @@ import {
 	METADATA_FOLDER,
 	UPLOAD_FOLDER
 } from '@/constants/files.constants'
-import { validationPathnameRegex } from '@/constants/validation.constants'
 
 import { IFileMetadata } from '@/types/file.types'
+
+import { validatePathname } from '@/app/api/utils/validate-pathname.util'
 
 export const config = {
 	api: {
@@ -21,31 +22,42 @@ export const config = {
 	}
 }
 
+async function handleFileSaving(
+	file: File,
+	saveDir: string,
+	metadataDir: string,
+	formData: FormData
+) {
+	const buffer = Buffer.from(await file.arrayBuffer())
+	const filePath = path.join(saveDir, file.name)
+	const metadataPath = path.join(metadataDir, `${file.name}.metadata.json`)
+
+	const fileLastModified = formData.get(`${file.name}_lastModified`) as string
+	const lastModified = fileLastModified ? Number(fileLastModified) : Date.now()
+	const metadata: IFileMetadata = {
+		name: file.name,
+		size: file.size,
+		type: file.type,
+		lastModified,
+		uploadedAt: Date.now()
+	}
+
+	await writeFile(filePath, buffer)
+	await utimes(filePath, new Date(), new Date(lastModified))
+	await writeFile(metadataPath, JSON.stringify(metadata, null, 2))
+}
+
 export async function POST(
 	req: NextRequest,
 	{ params }: { params: Promise<{ pathname: string[] }> }
 ) {
 	try {
-		const pathnameParam = (await params).pathname
-		const pathname = pathnameParam ? pathnameParam.join('/') : '/'
-		console.log('pathname', pathname)
-		if (!pathname) {
-			return NextResponse.json(
-				{ error: UploadErrorsEnum.PATHNAME_MISSING },
-				{ status: 400 }
-			)
-		}
-		//PATHNAME INVALID CHECK
-		if (!validationPathnameRegex.test(pathname)) {
-			return NextResponse.json(
-				{ error: UploadErrorsEnum.PATHNAME_INVALID },
-				{ status: 400 }
-			)
-		}
+		const pathname = ((await params).pathname || []).join('/')
+		validatePathname(pathname)
 
 		const formData = await req.formData()
-		console.log('formData', formData)
 		const files: File[] = formData.getAll('file') as File[]
+
 		if (!files || files.length === 0) {
 			return NextResponse.json(
 				{ error: UploadErrorsEnum.NO_FILES },
@@ -62,17 +74,17 @@ export async function POST(
 
 		const saveDir = path.join(UPLOAD_FOLDER, pathname)
 		const metadataDir = path.join(METADATA_FOLDER, pathname)
-		await fs.mkdir(saveDir, { recursive: true })
-		await fs.mkdir(metadataDir, { recursive: true })
-		console.log('saveDir', saveDir)
-		console.log('metadataDir', metadataDir)
+
+		await Promise.all([
+			fs.mkdir(saveDir, { recursive: true }),
+			fs.mkdir(metadataDir, { recursive: true })
+		])
 
 		const existedFiles = []
 		for (const file of files) {
-			const filePath = path.join(saveDir, file.name)
 			if (
 				await fs
-					.access(filePath)
+					.access(path.join(saveDir, file.name))
 					.then(() => true)
 					.catch(() => false)
 			) {
@@ -88,52 +100,15 @@ export async function POST(
 		}
 
 		for (const file of files) {
-			try {
-				const fileLastModified = formData.get(
-					`${file.name}_lastModified`
-				) as string
-				const lastModified = fileLastModified
-					? Number(fileLastModified)
-					: Date.now()
-				const metadata: IFileMetadata = {
-					name: file.name,
-					size: file.size,
-					type: file.type,
-					lastModified,
-					uploadedAt: Date.now()
-				}
-
-				const buffer = Buffer.from(await file.arrayBuffer())
-				const filename = file.name
-				const filePath = path.join(saveDir, filename)
-
-				// Сохраняем файл
-				await writeFile(filePath, buffer)
-
-				// Устанавливаем lastModified для файла
-				const now = new Date()
-				await utimes(filePath, now, new Date(lastModified)) // `atime` (последний доступ) и `mtime` (последняя модификация)
-
-				// Сохраняем метаданные
-				const metadataPath = path.join(metadataDir, `${filename}.metadata.json`)
-				await writeFile(metadataPath, JSON.stringify(metadata, null, 2))
-			} catch (err: any) {
-				return NextResponse.json(
-					{
-						error: UploadErrorsEnum.SOMETHING_WENT_WRONG,
-						details: [err.message]
-					},
-					{ status: 500 }
-				)
-			}
+			await handleFileSaving(file, saveDir, metadataDir, formData)
 		}
 
 		return NextResponse.json(
 			{
 				message: 'Files uploaded successfully',
-				savedFiles: files.map(file => file.name)
+				savedFiles: files.map(f => f.name)
 			},
-			{ status: 200 }
+			{ status: 201 }
 		)
 	} catch (err: any) {
 		console.error(err)
@@ -149,8 +124,8 @@ export async function GET(
 	{ params }: { params: Promise<{ pathname: Array<string> }> }
 ) {
 	try {
-		const pathnameArray = (await params).pathname || '' //[ 'lol', 'c59acac2006f65ca7ef6689b1a9795d2.pdf' ]
-		const pathname = decodeURIComponent(pathnameArray.join('/'))
+		const pathname = ((await params).pathname || []).join('/')
+		validatePathname(pathname)
 		console.log('pathname', pathname)
 		if (!pathname) {
 			return NextResponse.json(

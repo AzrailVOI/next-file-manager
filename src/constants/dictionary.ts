@@ -27,6 +27,7 @@ const TextDictionary: ITextDictionary = {
 			title: 'Upload new files',
 			choose: 'Choose files',
 			upload: 'Upload',
+			savedFiles: 'Saved files',
 			success: 'Files uploaded successfully',
 			error: {
 				[UploadErrorsEnum.SOMETHING_WENT_WRONG]: 'Something went wrong',
@@ -95,6 +96,7 @@ const TextDictionary: ITextDictionary = {
 			title: 'Завантажити нові файли',
 			choose: 'Вибрати файли',
 			upload: 'Завантажити',
+			savedFiles: 'Збережені файли',
 			success: 'Файли успішно завантажено',
 			error: {
 				[UploadErrorsEnum.SOMETHING_WENT_WRONG]: 'Щось пішло не так',
@@ -163,6 +165,7 @@ const TextDictionary: ITextDictionary = {
 			title: 'Загрузить новые файлы',
 			choose: 'Выбрать файлы',
 			upload: 'Загрузить',
+			savedFiles: 'Сохраненные файлы',
 			success: 'Файлы успешно загружены',
 			error: {
 				[UploadErrorsEnum.SOMETHING_WENT_WRONG]: 'Что-то пошло не так',
@@ -231,6 +234,7 @@ const TextDictionary: ITextDictionary = {
 			title: 'Nahrať nové súbory',
 			choose: 'Vybrať súbory',
 			upload: 'Nahrať',
+			savedFiles: 'Uložené súbory',
 			success: 'Súbory uspešne nahrané',
 			error: {
 				[UploadErrorsEnum.SOMETHING_WENT_WRONG]: 'Nastala chyba',
@@ -291,6 +295,7 @@ export interface IUpload {
 	choose: string
 	upload: string
 	success: string
+	savedFiles: string
 	error: Record<UploadErrorsEnum, string>
 	maxSize: string
 }

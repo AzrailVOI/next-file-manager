@@ -12,6 +12,7 @@ import Button from '@/components/Button'
 import DisplayChosenFiles from '@/components/UploadNewFile/DisplayChosenFiles'
 
 import TextDictionary from '@/constants/dictionary'
+import { MAX_FILES_SIZE } from '@/constants/files.constants'
 
 import useCreateFolderStore from '@/store/useCreateFolderStore'
 import useFilesStore from '@/store/useFilesStore'
@@ -54,8 +55,7 @@ export default function UploadNewFileForm() {
 			console.log('data', data)
 			// Проверка размера файлов
 			if (
-				chosenFiles.reduce((acc, file) => acc + file.size, 0) >
-				1024 * 1024 * 1024
+				chosenFiles.reduce((acc, file) => acc + file.size, 0) > MAX_FILES_SIZE
 			) {
 				toast.error(TextDictionary[lang].upload.error.FILES_TOO_LARGE, {
 					duration: 5000

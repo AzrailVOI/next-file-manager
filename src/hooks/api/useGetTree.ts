@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-import axios, { AxiosResponse } from 'axios'
 import { useEffect } from 'react'
 import { toast } from 'sonner'
 
@@ -10,6 +9,8 @@ import { ITreeResponse } from '@/types/file.types'
 
 import useSettingsStore from '@/store/useSettingsStore'
 
+import { treeService } from '@/services/tree.service'
+
 export function useGetTree(pathname: string) {
 	const lang = useSettingsStore(state => state.lang)
 	const {
@@ -18,14 +19,10 @@ export function useGetTree(pathname: string) {
 		isSuccess: isTreeSuccess,
 		isError,
 		error
-	} = useQuery<AxiosResponse<ITreeResponse, any>, any, ITreeResponse, string[]>(
-		{
-			queryKey: ['tree', pathname],
-			queryFn: () =>
-				axios.get<ITreeResponse>('/api/tree', { params: { pathname } }),
-			select: data => data.data
-		}
-	)
+	} = useQuery<ITreeResponse, any, ITreeResponse, string[]>({
+		queryKey: ['tree', decodeURIComponent(pathname)],
+		queryFn: () => treeService.getTree(pathname)
+	})
 
 	useEffect(() => {
 		if (isError) {

@@ -9,19 +9,23 @@ export const displayError = (e: any, lang: keyof ITextDictionary) => {
 		details: e.response.data.details || []
 	}
 	switch (error.error) {
-		case UploadErrorsEnum.SOMETHING_WENT_WRONG ||
-			UploadErrorsEnum.ALREADY_EXISTS ||
-			UploadErrorsEnum.INVALID_FOLDER_NAME ||
-			UploadErrorsEnum.METADATA_MISMATCH:
+		case UploadErrorsEnum.SOMETHING_WENT_WRONG:
+		case UploadErrorsEnum.ALREADY_EXISTS:
+		case UploadErrorsEnum.INVALID_FOLDER_NAME:
+		case UploadErrorsEnum.METADATA_MISMATCH:
 			toast.error(
 				() => (
-					<div>
-						<p>{TextDictionary[lang].upload.error[error.error]}</p>
-						{error.details &&
-							error.details.length > 0 &&
-							error.details.map(message => (
-								<p key={error.error + message}>{message}</p>
-							))}
+					<div className={'flex flex-col gap-1.5'}>
+						<b>{TextDictionary[lang].upload.error[error.error]}</b>
+						{error.details && error.details.length > 0 && (
+							<div className={'flex flex-col gap-1'}>
+								<ul className={'ml-0.5'}>
+									{error.details.map((file, index) => (
+										<li key={index}>{file}</li>
+									))}
+								</ul>
+							</div>
+						)}
 					</div>
 				),
 				{ duration: 5000 }

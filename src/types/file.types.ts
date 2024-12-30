@@ -13,5 +13,11 @@ export interface ITreeResponse {
 
 export interface IDirMetadata {
 	name: string
+	size: number
 	lastModified: number
+}
+
+export interface IUploadResponse {
+	message: string
+	savedFiles: string[]
 }

@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-import axios, { AxiosResponse } from 'axios'
 import { useEffect } from 'react'
 import { toast } from 'sonner'
 
@@ -8,19 +7,17 @@ import TextDictionary from '@/constants/dictionary'
 
 import useSettingsStore from '@/store/useSettingsStore'
 
+import { fileService } from '@/services/file.service'
+
 export const useGetFileStream = (pathname: string) => {
 	const lang = useSettingsStore(state => state.lang)
 	const {
 		data: file,
 		isLoading,
 		error
-	} = useQuery<AxiosResponse<Blob, any>, any, Blob, string[]>({
+	} = useQuery<Blob, any, Blob, string[]>({
 		queryKey: ['file', pathname],
-		queryFn: () =>
-			axios.get(`/api/file${pathname}`, {
-				responseType: 'blob'
-			}),
-		select: data => data.data
+		queryFn: () => fileService.getFileStream(pathname)
 	})
 
 	useEffect(() => {

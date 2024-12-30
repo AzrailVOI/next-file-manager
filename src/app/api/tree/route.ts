@@ -5,36 +5,24 @@ import path from 'path'
 
 import { UploadErrorsEnum } from '@/constants/api.constants'
 import { METADATA_FOLDER, UPLOAD_FOLDER } from '@/constants/files.constants'
-import { validationPathnameRegex } from '@/constants/validation.constants'
 
 import { IDirMetadata, IFileMetadata, ITreeResponse } from '@/types/file.types'
 
 import { validateFolderName } from '@/utils/validate-folder.util'
+
+import { validatePathname } from '@/app/api/utils/validate-pathname.util'
 
 export async function GET(req: NextRequest) {
 	const pathname = decodeURIComponent(
 		req.nextUrl.searchParams.get('pathname') || ''
 	)
 
-	console.log('pathname', pathname)
-
-	if (!pathname) {
-		return NextResponse.json(
-			{ error: UploadErrorsEnum.PATHNAME_MISSING },
-			{ status: 400 }
-		)
-	}
-	if (!validationPathnameRegex.test(pathname)) {
-		return NextResponse.json(
-			{ error: UploadErrorsEnum.PATHNAME_INVALID },
-			{ status: 400 }
-		)
-	}
+	validatePathname(pathname)
 
 	const files: IFileMetadata[] = []
 	const dirs: IDirMetadata[] = []
 	const metadataDir = path.join(METADATA_FOLDER, pathname)
-	await fs.mkdir(metadataDir, { recursive: true })
+	await fs.mkdir(METADATA_FOLDER, { recursive: true })
 
 	try {
 		const items = await readdir(metadataDir, { withFileTypes: true })
@@ -42,12 +30,16 @@ export async function GET(req: NextRequest) {
 		for (const item of items) {
 			const itemPath = path.join(metadataDir, item.name)
 
+			console.log('itemPath', itemPath)
 			const itemStat = await stat(itemPath)
 
 			if (item.isDirectory()) {
+				const dirSize = await getFolderSize(itemPath)
+				console.log('dirSize', dirSize)
 				dirs.push({
 					name: item.name,
-					lastModified: itemStat.mtimeMs
+					lastModified: itemStat.mtimeMs,
+					size: dirSize
 				}) // Добавляем директорию в массив `dirs`
 			} else if (item.isFile()) {
 				const fileContent = await readFile(itemPath, 'utf-8')
@@ -69,11 +61,10 @@ export async function GET(req: NextRequest) {
 
 		return NextResponse.json(response, { status: 200 })
 	} catch (err: any) {
-		console.error(err)
+		console.error('Error reading directory:', err)
 		return NextResponse.json(
 			{
-				error: UploadErrorsEnum.SOMETHING_WENT_WRONG,
-				details: [err.message]
+				error: UploadErrorsEnum.SOMETHING_WENT_WRONG
 			},
 			{ status: 500 }
 		)
@@ -124,4 +115,24 @@ export async function POST(req: NextRequest) {
 			{ status: 500 }
 		)
 	}
+}
+
+async function getFolderSize(folderPath: string) {
+	let totalSize = 0
+
+	async function calculateSize(dirPath: string) {
+		const entries = await fs.readdir(dirPath, { withFileTypes: true })
+		for (const entry of entries) {
+			const entryPath = path.join(dirPath, entry.name)
+			if (entry.isDirectory()) {
+				await calculateSize(entryPath) // Рекурсивно обрабатываем вложенные папки
+			} else if (entry.isFile()) {
+				const file = await readFile(entryPath, 'utf-8')
+				totalSize += JSON.parse(file).size
+			}
+		}
+	}
+
+	await calculateSize(folderPath)
+	return totalSize
 }
