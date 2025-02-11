@@ -1,36 +1,101 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# [File manager](https://github.com/AzrailVOI/next-file-manager)
 
-## Getting Started
+Developed by [AzrailVOI](https://github.com/AzrailVOI)
 
-First, run the development server:
+Developed on [Next.js 15](https://github.com/vercel/next.js)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
+### Allows:
+
+- upload files
+- create folders
+- watch files (only browser supported)
+- rename and delete files and folders (right mouse button on file or folder)
+
+### Implemented in 4 languages:
+
+- English
+- Ukrainian
+- Slovak
+- Russian.
+
+You can add new translations in the file along the path `src/constants/dictionary.ts`
+
+# Quick start with Docker
+
+```shell
+docker run -d -p 3000:3000 azrailvo/next-file-manager```
+```
+
+With Docker Volume
+
+```shell
+docker volume create filetree_volume
+```
+
+```shell
+docker run -d -p 3000:3000 -v filetree_volume:/usr/src/app/fileTree azrailvo/next-file-manager
+```
+
+# Quick start with NodeJS or Bun
+
+Create `fileTree` directory in your project
+
+```shell
+mkdir fileTree
+```
+
+Install dependencies
+
+```shell
+npm install
+```
+
+```shell
+yarn
+```
+
+```shell
+pnpm install
+```
+
+```shell
+bun install
+```
+
+Launch
+
+- In development mode
+
+```sh
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- In standard mode
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```sh
+bun start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- PM2 launch
 
-## Learn More
+```sh
+pm2 start bun --name "file-manager" -- start
+```
 
-To learn more about Next.js, take a look at the following resources:
+# Build
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```shell
+npm run build
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```shell
+yarn run build
+```
 
-## Deploy on Vercel
+```shell
+pnpm run build
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```shell
+bun run build
+```
