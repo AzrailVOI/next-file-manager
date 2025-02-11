@@ -23,7 +23,7 @@ You can add new translations in the file along the path `src/constants/dictionar
 # Quick start with Docker
 
 ```shell
-docker run -d -p 3000:3000 azrailvo/next-file-manager```
+docker run -d -p 3000:3000 azrailvo/next-file-manager
 ```
 
 With Docker Volume
