@@ -17,7 +17,7 @@ interface TreeEditItemProps {
 }
 
 export default function TreeEditItem({ initialTreeItem }: TreeEditItemProps) {
-	const { reset, register, watch, handleSubmit } = useForm<IFileMetadata>({
+	const { reset, register, handleSubmit } = useForm<IFileMetadata>({
 		defaultValues: initialTreeItem
 	})
 	const pathname = usePathname()

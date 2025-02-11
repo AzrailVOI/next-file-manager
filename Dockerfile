@@ -1,15 +1,15 @@
-FROM node
+FROM oven/bun
 LABEL authors="Azraїl"
 
 # Установите рабочий каталог
 WORKDIR /usr/src/app
 
+EXPOSE 3000
+
 COPY package.json ./
 COPY bun.lockb ./
 
-RUN curl -fsSL https://bun.sh/install | bash
-
-mkdir "tree"
+RUN mkdir "fileTree"
 
 RUN bun install
 COPY . .

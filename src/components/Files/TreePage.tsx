@@ -22,9 +22,7 @@ interface IFilePageProps {
 export default function TreePage({ pathname }: IFilePageProps) {
 	const { tree, isTreeLoading } = useGetTree(pathname)
 	const lang = useSettingsStore(state => state.lang)
-	const { isFolderCreating, setIsFolderCreating } = useCreateFolderStore(
-		state => state
-	)
+	const { isFolderCreating } = useCreateFolderStore(state => state)
 
 	return (
 		<Fragment>

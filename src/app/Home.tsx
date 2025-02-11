@@ -5,6 +5,7 @@ import { Fragment, useMemo } from 'react'
 
 import FilePage from '@/components/Files/FilePage'
 import TreePage from '@/components/Files/TreePage'
+import MiniLoader from '@/components/MiniLoader'
 
 import { useGetIsFile } from '@/hooks/api/useGetIsFile'
 
@@ -15,6 +16,7 @@ export default function Home() {
 
 	return (
 		<Fragment>
+			{isFileLoading && <MiniLoader />}
 			{isFileSuccess && (
 				<>
 					{isFile ? (
