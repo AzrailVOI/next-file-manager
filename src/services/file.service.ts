@@ -22,6 +22,22 @@ class FileService {
 		)
 		return response.data
 	}
+
+	async renameFile(pathname: string, newName: string) {
+		console.log('rename file: ', pathname, newName)
+		const response = await axios.put<IUploadResponse>(
+			`${this.BASE_URL}${pathname}?name=${encodeURIComponent(newName)}`
+		)
+		return response.data
+	}
+
+	async deleteFile(pathname: string) {
+		console.log('delete file: ', pathname)
+		const response = await axios.delete<IUploadResponse>(
+			`${this.BASE_URL}${pathname}`
+		)
+		return response.data
+	}
 }
 
 export const fileService = new FileService()

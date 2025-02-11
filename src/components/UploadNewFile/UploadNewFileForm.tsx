@@ -57,7 +57,7 @@ export default function UploadNewFileForm() {
 			if (
 				chosenFiles.reduce((acc, file) => acc + file.size, 0) > MAX_FILES_SIZE
 			) {
-				toast.error(TextDictionary[lang].upload.error.FILES_TOO_LARGE, {
+				toast.error(TextDictionary[lang].upload.error.TOO_LARGE, {
 					duration: 5000
 				})
 			} else {

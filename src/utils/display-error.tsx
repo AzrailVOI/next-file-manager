@@ -11,7 +11,7 @@ export const displayError = (e: any, lang: keyof ITextDictionary) => {
 	switch (error.error) {
 		case UploadErrorsEnum.SOMETHING_WENT_WRONG:
 		case UploadErrorsEnum.ALREADY_EXISTS:
-		case UploadErrorsEnum.INVALID_FOLDER_NAME:
+		case UploadErrorsEnum.INVALID_NAME:
 		case UploadErrorsEnum.METADATA_MISMATCH:
 			toast.error(
 				() => (

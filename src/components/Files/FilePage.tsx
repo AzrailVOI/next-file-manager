@@ -1,8 +1,7 @@
 import { clsx } from 'clsx'
-import { Download, Link as LinkIcon } from 'lucide-react'
+import { Download, Expand, Link as LinkIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useMemo } from 'react'
-import { toast } from 'sonner'
 
 import Button from '@/components/Button'
 import DisplayFile from '@/components/Files/DisplayFile'
@@ -14,6 +13,10 @@ import useSettingsStore from '@/store/useSettingsStore'
 
 import { useGetFileStream } from '@/hooks/api/useGetFileStream'
 
+import { copyFileLinkToClipboard } from '@/utils/copy-file-link-to-clipboard'
+import { downloadFile } from '@/utils/download-file'
+import { getDirectPathToFile } from '@/utils/get-direct-path'
+
 import styles from './FilePage.module.scss'
 
 interface IFilePage {
@@ -22,17 +25,19 @@ interface IFilePage {
 
 export default function FilePage({ pathname }: IFilePage) {
 	const fileName = useMemo(() => pathname.split('/').pop(), [pathname])
-	const origin = useMemo(() => window.location.origin, [])
 	const lang = useSettingsStore(state => state.lang)
 	const { file, isLoading } = useGetFileStream(pathname)
+	const directPathToFile = useMemo(
+		() => getDirectPathToFile(pathname),
+		[pathname]
+	)
 
-	function copyToClipboard() {
-		navigator.clipboard
-			.writeText(`${origin}/api/file${pathname}`)
-			.then(() => console.log('Copied to clipboard'))
-			.catch(e => console.error(e))
+	async function downloadFileHandler() {
+		await downloadFile(directPathToFile, lang)
+	}
 
-		toast.success(TextDictionary[lang].messages.copiedLink)
+	function copyToClipboardHandler() {
+		copyFileLinkToClipboard(directPathToFile, lang)
 	}
 
 	return (
@@ -46,17 +51,23 @@ export default function FilePage({ pathname }: IFilePage) {
 				</h1>
 				<div className={'flex gap-2'}>
 					<Button
-						onClick={copyToClipboard}
+						onClick={copyToClipboardHandler}
 						className={clsx('p-2', styles.button)}
 					>
 						<LinkIcon />
 					</Button>
+					<Button
+						className={clsx('p-2', styles.button)}
+						onClick={downloadFileHandler}
+					>
+						<Download />
+					</Button>
 					<Link
-						href={`/api/file${pathname}`}
+						href={directPathToFile}
 						target={'_blank'}
 					>
-						<Button className={clsx('block p-2', styles.button)}>
-							<Download />
+						<Button className={clsx('p-2', styles.button)}>
+							<Expand />
 						</Button>
 					</Link>
 				</div>

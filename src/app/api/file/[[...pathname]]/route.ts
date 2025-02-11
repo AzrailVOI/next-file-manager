@@ -14,6 +14,8 @@ import {
 
 import { IFileMetadata } from '@/types/file.types'
 
+import { validateFolderName } from '@/utils/validate-folder.util'
+
 import { validatePathname } from '@/app/api/utils/validate-pathname.util'
 
 export const config = {
@@ -60,20 +62,44 @@ export async function POST(
 
 		if (!files || files.length === 0) {
 			return NextResponse.json(
-				{ error: UploadErrorsEnum.NO_FILES },
+				{ error: UploadErrorsEnum.NO_ONES },
 				{ status: 400 }
 			)
 		}
 
 		if (files.reduce((acc, file) => acc + file.size, 0) > MAX_FILES_SIZE) {
 			return NextResponse.json(
-				{ error: UploadErrorsEnum.FILES_TOO_LARGE },
+				{ error: UploadErrorsEnum.TOO_LARGE },
 				{ status: 400 }
 			)
 		}
 
 		const saveDir = path.join(UPLOAD_FOLDER, pathname)
 		const metadataDir = path.join(METADATA_FOLDER, pathname)
+
+		const isSaveDirExist = await fs
+			.access(saveDir)
+			.then(() => true)
+			.catch(() => false)
+
+		if (!isSaveDirExist) {
+			return NextResponse.json(
+				{ error: UploadErrorsEnum.PATHNAME_INVALID },
+				{ status: 404 }
+			)
+		}
+
+		const isMetadataDirExist = await fs
+			.access(metadataDir)
+			.then(() => true)
+			.catch(() => false)
+
+		if (!isMetadataDirExist) {
+			return NextResponse.json(
+				{ error: UploadErrorsEnum.PATHNAME_INVALID },
+				{ status: 404 }
+			)
+		}
 
 		await Promise.all([
 			fs.mkdir(saveDir, { recursive: true }),
@@ -127,22 +153,18 @@ export async function GET(
 		const pathname = ((await params).pathname || []).join('/')
 		validatePathname(pathname)
 		console.log('pathname', pathname)
-		if (!pathname) {
-			return NextResponse.json(
-				{ error: UploadErrorsEnum.PATHNAME_MISSING },
-				{ status: 400 }
-			)
-		}
 
 		const filePath = path.join(UPLOAD_FOLDER, pathname)
 		try {
 			await fs.access(filePath) // Проверяем, существует ли файл
 		} catch {
 			return NextResponse.json(
-				{ error: UploadErrorsEnum.NO_FILES },
+				{ error: UploadErrorsEnum.NO_ONES },
 				{ status: 404 }
 			)
 		}
+
+		const fileName = path.basename(filePath)
 
 		const mimeType = mime.getType(filePath) || 'application/octet-stream'
 		const fileStream = createReadStream(filePath)
@@ -154,6 +176,16 @@ export async function GET(
 			}
 		})
 
+		const isDownload = req.nextUrl.searchParams.get('download') === 'true'
+		if (isDownload) {
+			return new NextResponse(readableStream, {
+				headers: {
+					'Content-Type': mimeType,
+					'Cache-Control': 'no-cache',
+					'Content-Disposition': `attachment; filename="${fileName}"`
+				}
+			})
+		}
 		return new NextResponse(readableStream, {
 			headers: {
 				'Content-Type': mimeType,
@@ -164,6 +196,171 @@ export async function GET(
 		console.error(err)
 		return NextResponse.json(
 			{ error: UploadErrorsEnum.SOMETHING_WENT_WRONG, details: [err.message] },
+			{ status: 500 }
+		)
+	}
+}
+
+//RENAMING
+export async function PUT(
+	req: NextRequest,
+	{ params }: { params: Promise<{ pathname: Array<string> }> }
+) {
+	try {
+		// Извлечение параметров пути
+		const pathname = ((await params).pathname || []).join('/')
+		validatePathname(pathname)
+
+		// Новый имя файла
+		const newName = decodeURIComponent(
+			req.nextUrl.searchParams.get('name') || ''
+		)
+		if (!newName) {
+			return NextResponse.json(
+				{ error: UploadErrorsEnum.PATHNAME_MISSING },
+				{ status: 400 }
+			)
+		}
+
+		// Проверка валидности имени
+		const validation = validateFolderName(newName)
+		if (!validation.isValid) {
+			return NextResponse.json(
+				{
+					error: UploadErrorsEnum.INVALID_NAME,
+					details: validation.errors
+				},
+				{ status: 400 }
+			)
+		}
+
+		// Пути старого и нового файла
+		const oldFilePath = path.join(UPLOAD_FOLDER, pathname)
+		const newFilePath = path.join(
+			UPLOAD_FOLDER,
+			path.dirname(pathname),
+			newName
+		)
+
+		// Пути метаданных
+		const metadataFilePath = path.join(
+			METADATA_FOLDER,
+			`${pathname}.metadata.json`
+		)
+		const newMetadataFilePath = path.join(
+			METADATA_FOLDER,
+			path.dirname(pathname),
+			`${newName}.metadata.json`
+		)
+
+		// Проверка существования файла и метаданных
+		const fileExists = await fs
+			.access(oldFilePath)
+			.then(() => true)
+			.catch(() => false)
+		const metadataExists = await fs
+			.access(metadataFilePath)
+			.then(() => true)
+			.catch(() => false)
+
+		if (!fileExists || !metadataExists) {
+			return NextResponse.json(
+				{ error: UploadErrorsEnum.NO_ONES },
+				{ status: 404 }
+			)
+		}
+
+		// Проверка на существование файла с новым именем
+		const newFileExists = await fs
+			.access(newFilePath)
+			.then(() => true)
+			.catch(() => false)
+
+		if (newFileExists) {
+			return NextResponse.json(
+				{
+					error: UploadErrorsEnum.ALREADY_EXISTS,
+					details: [newName]
+				},
+				{ status: 400 }
+			)
+		}
+
+		// Переименование файла
+		await fs.rename(oldFilePath, newFilePath)
+
+		// Обновление метаданных
+		const metadataContent = await fs.readFile(metadataFilePath, 'utf-8')
+		const metadata: IFileMetadata = JSON.parse(metadataContent)
+
+		metadata.name = newName // Обновляем имя файла в метаданных
+		metadata.lastModified = Date.now() // Обновляем дату последней модификации
+
+		await fs.writeFile(newMetadataFilePath, JSON.stringify(metadata, null, 2))
+
+		// Удаление старого файла метаданных
+		await fs.unlink(metadataFilePath)
+
+		return NextResponse.json(
+			{ message: 'File and metadata updated successfully' },
+			{ status: 200 }
+		)
+	} catch (err: any) {
+		console.error('Error during file renaming:', err)
+		return NextResponse.json(
+			{
+				error: UploadErrorsEnum.SOMETHING_WENT_WRONG,
+				details: [err.message]
+			},
+			{ status: 500 }
+		)
+	}
+}
+
+export async function DELETE(
+	req: NextRequest,
+	{ params }: { params: Promise<{ pathname: Array<string> }> }
+) {
+	try {
+		const pathname = ((await params).pathname || []).join('/')
+		validatePathname(pathname)
+
+		const filePath = path.join(UPLOAD_FOLDER, pathname)
+		const metadataFilePath = path.join(
+			METADATA_FOLDER,
+			`${pathname}.metadata.json`
+		)
+
+		const fileExists = await fs
+			.access(filePath)
+			.then(() => true)
+			.catch(() => false)
+		const metadataExists = await fs
+			.access(metadataFilePath)
+			.then(() => true)
+			.catch(() => false)
+
+		if (!fileExists || !metadataExists) {
+			return NextResponse.json(
+				{ error: UploadErrorsEnum.NO_ONES },
+				{ status: 404 }
+			)
+		}
+
+		await fs.unlink(filePath)
+		await fs.unlink(metadataFilePath)
+
+		return NextResponse.json(
+			{ message: 'File and metadata deleted successfully' },
+			{ status: 200 }
+		)
+	} catch (err: any) {
+		console.error('Error during file deletion:', err)
+		return NextResponse.json(
+			{
+				error: UploadErrorsEnum.SOMETHING_WENT_WRONG,
+				details: [err.message]
+			},
 			{ status: 500 }
 		)
 	}

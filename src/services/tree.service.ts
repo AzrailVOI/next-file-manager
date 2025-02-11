@@ -25,6 +25,24 @@ class TreeService {
 
 		return response.data
 	}
+
+	async renameFolder(name: string, pathname: string) {
+		console.log('rename folder: ', name, pathname)
+		const response = await axios.put(
+			`${this.BASE_URL}?name=${encodeURIComponent(name)}&pathname=${encodeURIComponent(pathname)}`
+		)
+
+		return response.data
+	}
+
+	async deleteFolder(pathname: string) {
+		console.log('delete folder: ', pathname)
+		const response = await axios.delete(
+			`${this.BASE_URL}?pathname=${encodeURIComponent(pathname)}`
+		)
+
+		return response.data
+	}
 }
 
 export const treeService = new TreeService()

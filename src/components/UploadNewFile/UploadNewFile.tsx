@@ -41,7 +41,7 @@ export default async function UploadNewFile({
 			<Settings />
 			<div
 				className={
-					'grid gap-2 lg:gap-5 2xl:grid-cols-[1.1fr_6fr] lg:grid-cols-[auto_6fr] grid-rows-[auto_1fr_auto] mt-1'
+					'grid gap-2 lg:gap-5 2xl:grid-cols-[1.1fr_7fr] lg:grid-cols-[auto_7fr] grid-rows-[auto_1fr_auto] mt-1'
 				}
 			>
 				<h2

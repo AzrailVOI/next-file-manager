@@ -36,7 +36,7 @@ export default function DisplayFile({ file }: { file: Blob }) {
 	if (!fileURL || !mimeType)
 		return (
 			<h3 className={'text-xl italic'}>
-				{TextDictionary[lang].upload.error.NO_FILES}
+				{TextDictionary[lang].upload.error.NO_ONES}
 			</h3>
 		)
 
