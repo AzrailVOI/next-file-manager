@@ -68,8 +68,8 @@ export async function GET(req: NextRequest) {
 		}
 
 		const response: ITreeResponse = {
-			files,
-			dirs
+			files: files.sort((a, b) => a.name.localeCompare(b.name)),
+			dirs: dirs.sort((a, b) => a.name.localeCompare(b.name))
 		}
 
 		return NextResponse.json(response, { status: 200 })
