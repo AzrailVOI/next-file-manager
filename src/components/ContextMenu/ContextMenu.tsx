@@ -44,7 +44,7 @@ const ContextMenu = forwardRef<HTMLElement, IContextMenuProps>(
 			<aside
 				ref={ref}
 				className={clsx(
-					'fixed rounded-lg bg-bg border border-border w-min text-nowrap flex flex-col gap-0.5 z-10',
+					'fixed rounded-lg bg-bg border border-border w-min text-nowrap flex flex-col gap-0.5 z-10 overflow-hidden shadow transition-all',
 					{
 						'border-violet bg-bg_dark': theme === 'dark'
 					}
